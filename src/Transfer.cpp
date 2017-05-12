@@ -70,10 +70,10 @@ void Transfer::loadReservations() {
 	ifstream inFile;
 
 	//Ler o ficheiro nos.txt
-	inFile.open("reservas.txt");
+	inFile.open("database/reservas.txt");
 
 	if (!inFile) {
-		cerr << "Unable to open file datafile.txt";
+		cerr << "Unable to open file reservas.txt";
 		exit(1);
 	}
 
@@ -116,10 +116,10 @@ void Transfer::loadVans() {
 	ifstream inFile;
 
 	//Ler o ficheiro nos.txt
-	inFile.open("vans.txt");
+	inFile.open("database/vans.txt");
 
 	if (!inFile) {
-		cerr << "Unable to open file datafile.txt";
+		cerr << "Unable to open file vans.txt";
 		exit(1);
 	}
 

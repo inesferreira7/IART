@@ -41,7 +41,7 @@ void readNodes(Graph<Node, Road> & g, GraphViewer *gv) {
 	inFile.open("database/nodesDemo.txt");
 
 	if (!inFile) {
-		cerr << "Unable to open file datafile.txt";
+		cerr << "Unable to open file nodesDemo.txt";
 		exit(1);
 	}
 
@@ -83,7 +83,7 @@ void readEdges(Graph<Node, Road> & g, GraphViewer *gv) {
 	inFile.open("database/subroadsDemo.txt");
 
 	if (!inFile) {
-		cerr << "Unable to open file datafile.txt";
+		cerr << "Unable to open file subroadsDemo.txt";
 		exit(1);   // call system to stop
 	}
 
@@ -127,7 +127,7 @@ Road readRoads(unsigned long roadID, GraphViewer *gv) {
 	inFile.open("database/roadsDemo.txt");
 
 	if (!inFile) {
-		cerr << "Unable to open file datafile.txt";
+		cerr << "Unable to open file roadsDemo.txt";
 		exit(1);
 	}
 
