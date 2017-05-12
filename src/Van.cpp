@@ -47,14 +47,14 @@ bool Van::is_Full() const{
 	return isFull;
 }
 
-/*void Van::getPath(Graph<Node, Road> &g, GraphViewer *gv) const{
+void Van::getPath(Graph<Node, Road> &g, GraphViewer *gv) const{
 	Node n1 = g.getVertexSet().at(0)->getInfo();
 	g.dijkstraShortestPath(n1);
 	vector <Node> dest;
-	vector<string> hotels = getHotels();
+	vector<string> hotels = getLocals();
 
 	for (int i = 0; i < res.size(); i++){
-		dest.push_back(findNode(g, res.at(i).getDestination()));
+		dest.push_back(findNode(g, res.at(i).getLocal()));
 	}
 
 	Node orig = n1;
@@ -92,7 +92,7 @@ bool Van::is_Full() const{
 		if(path.at(l).getInfo().getId() >0 && path.at(l).getInfo().getId() < 9){
 			bool found = false;
 			for (int v = 0; v < res.size(); v++){
-				if(res.at(v).getDestination() == path.at(l).getInfo().getId())
+				if(res.at(v).getLocal() == path.at(l).getInfo().getId())
 					found = true;
 			}
 			if (found){
@@ -113,4 +113,4 @@ bool Van::is_Full() const{
 	gv->setVertexIcon(path.at(path.size() - 1).getInfo().getId(),"hotel_visit.png");
 	gv->rearrange();
 
-}*/
+}

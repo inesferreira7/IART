@@ -34,8 +34,8 @@ void Transfer::addVan(Van v) {
 /**
  * Reads and loads the graph info
  */
-/*void Transfer::loadGraph() {
-	hotels = getHotels();
+void Transfer::loadGraph() {
+	locals = getLocals();
 
 	gv = new GraphViewer(600, 600, false);
 	gv->createWindow(700, 700);
@@ -47,8 +47,8 @@ void Transfer::addVan(Van v) {
 	readNodes(g, gv);
 	readEdges(g, gv);
 
-	for(unsigned int h=0; h<hotels.size(); h++){
-		gv->setVertexLabel(h+1, hotels.at(h));
+	for(unsigned int h=0; h<locals.size(); h++){
+		gv->setVertexLabel(h+1, locals.at(h));
 		if(h!=0){
 			gv->setVertexIcon(h+1,"hotel.png");
 		} else {
@@ -58,22 +58,15 @@ void Transfer::addVan(Van v) {
 
 	gv->rearrange();
 }
-*/
-/**
- * Auxiliar function
- * Returns the ID of the nodes
- */
-/*void Transfer::showNodeID() {
+
+void Transfer::showNodeID() {
 	for (unsigned int i = 0; i < g.getVertexSet().size(); i++) {
 		if (g.getVertexSet().at(i)->getAdj().size() != 0)
 			cout << g.getVertexSet().at(i)->getAdj().at(0).getWeight() << endl;
 	}
 }
 
-/**
- * loads the reservations
- */
-/*void Transfer::loadReservations() {
+void Transfer::loadReservations() {
 	ifstream inFile;
 
 	//Ler o ficheiro nos.txt
@@ -100,8 +93,6 @@ void Transfer::addVan(Van v) {
 		std::stringstream s(line);
 		std::getline(linestream, name, ';'); // read up-to the first ; (discard ;).
 
-		std::getline(s, data, ';');
-		s >> nif;
 		std::getline(linestream, data, ';');
 		linestream >> hour;
 		std::getline(linestream, data, ';'); // read up-to the first ; (discard ;).
@@ -109,7 +100,7 @@ void Transfer::addVan(Van v) {
 		std::getline(linestream, data, ';'); // read up-to the first ; (discard ;).
 		linestream >> dest;
 
-		Person p1(name, nif);
+		string p1 = name;
 		Date d(hour, min);
 		Reservation r(p1, d, dest);
 		reservations.push_back(r);
@@ -121,10 +112,7 @@ void Transfer::addVan(Van v) {
 	inFile.close();
 }
 
-/**
- * loads the vans
- */
-/*void Transfer::loadVans() {
+void Transfer::loadVans() {
 	ifstream inFile;
 
 	//Ler o ficheiro nos.txt
@@ -156,10 +144,10 @@ void Transfer::addVan(Van v) {
 		while (i < vans.at(l).getCapacity() && !temp.empty()) {
 			int j = 0;
 			for (unsigned int k = 0; k < vans.at(l).getRes().size(); k++) {
-				if (exceedsTime(vans.at(l).getRes().at(k),
+				/*if (exceedsTime(vans.at(l).getRes().at(k),  //FIX ME!!!!
 						temp.at(0))) {
 					j++;
-				}
+				}*/
 			}
 			if (j == 0) {
 				vans.at(l).addRes(temp.at(0));
@@ -172,46 +160,43 @@ void Transfer::addVan(Van v) {
 	}
 }
 
-/**
- * Shows the passengers each van will transport and the time they will leave the airport
- */
-/*void Transfer::transportClient() {
+void Transfer::transportClient() {
 
 	//Date out = reservations.at(reservations.size() - 1).getArrivalDate();
 	string clients;
 	string reservation;
-	vector<int> hotVisited;
-	vector <string> hotels = getHotels();
+	vector<int> localsVisited;
+	vector <string> locals = getLocals();
 	boolean write =true;
 	for (unsigned int i = 0; i < this->vans.size(); i++) {
 		if (vans.at(i).getRes().size() == 0)
 			break;
 		Date out = vans.at(i).getRes().at( vans.at(i).getRes().size() - 1).getArrivalDate();
-		cout << endl << endl << "Carrinha " << vans.at(i).getId() << ": Hora de partida: " << out.getHour() << ":" << out.getMin() << "h" << endl;
+		cout << endl << endl << "Carrinha " << vans.at(i).getPlate() << ": Hora de partida: " << out.getHour() << ":" << out.getMin() << "h" << endl;
 		cout  << endl << "Clientes transportados:" << endl;
 		stringstream ss;
-		ss << vans.at(i).getId();
+		ss << vans.at(i).getPlate();
 		clients += ss.str()+ "{";
 		reservation += ss.str() + "{;";
 		for (unsigned int j = 0; j < vans.at(i).getRes().size(); j++) {
-			cout << endl << vans.at(i).getRes().at(j).getResponsible().getName() << "   ---------->   "  << hotels.at(vans.at(i).getRes().at(j).getDestination()-1);
-			for(unsigned int x=0; x<hotVisited.size(); x++){
-				if(hotVisited[x]==vans.at(i).getRes().at(j).getDestination()-1){
+			cout << endl << vans.at(i).getRes().at(j).getClientName() << "   ---------->   "  << locals.at(vans.at(i).getRes().at(j).getLocal()-1);
+			for(unsigned int x=0; x<localsVisited.size(); x++){
+				if(localsVisited[x]==vans.at(i).getRes().at(j).getLocal()-1){
 					write=false;
 				}
 			}
 			if(write){
-				hotVisited.push_back(vans.at(i).getRes().at(j).getDestination()-1);
-				reservation += hotels.at(vans.at(i).getRes().at(j).getDestination()-1) + "; ";
+				localsVisited.push_back(vans.at(i).getRes().at(j).getLocal()-1);
+				reservation += locals.at(vans.at(i).getRes().at(j).getLocal()-1) + "; ";
 			}
-			clients += vans.at(i).getRes().at(j).getResponsible().getName() + "; ";
+			clients += vans.at(i).getRes().at(j).getClientName() + "; ";
 			write=true;
 
 		}
 		clients += "}";
 		reservation.erase(reservation.length()-1);
 		reservation += "}";
-		hotVisited.clear();
+		localsVisited.clear();
 	}
 	cout << endl << endl << endl;
 	//vans.at(0).getPath(g);
@@ -228,20 +213,17 @@ void Transfer::addVan(Van v) {
 
 }
 
-/**
- * Shows the path of each van
- */
-/*void Transfer::showPath(){
+void Transfer::showPath(){
 	for (unsigned int i =0 ; i< vans.size(); i++){
-		cout << "Percurso da carrinha " << vans.at(i).getId() << endl << endl;
+		cout << "Percurso da carrinha " << vans.at(i).getPlate() << endl << endl;
 		vans.at(i).getPath(g, gv);
 		cout << endl << endl;
 		getchar();
 		for(unsigned int j=0;j<g.getVertexSet().size()*2; j++){
 			gv->setEdgeColor(j+1, "blue");
 		}
-		for(unsigned int h=0; h<hotels.size(); h++){
-			gv->setVertexLabel(h+1, hotels.at(h));
+		for(unsigned int h=0; h<locals.size(); h++){
+			gv->setVertexLabel(h+1, locals.at(h));
 			if(h!=0){
 				gv->setVertexIcon(h+1,"hotel.png");
 			}

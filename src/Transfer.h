@@ -15,19 +15,19 @@
 #include "readFiles.h"
 #include <string>
 #include <algorithm>
-#include "Utilities.h"
+//#include "Utilities.h"
 
 using namespace std;
 
 class Transfer{
 	vector<Reservation> reservations;
 	vector<Van> vans;
-	vector<string> hotels;
+	vector<string> locals;
 
 public:
 	Transfer();
-	/*Graph<Node, Road> g;
-	GraphViewer *gv;*/
+	Graph<Node, Road> g;
+	GraphViewer *gv;
 	vector<Reservation> getReservations();
 	vector<Van> getVans();
 	void addReservation(Reservation r);

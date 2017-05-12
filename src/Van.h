@@ -2,10 +2,10 @@
 #define VAN_H_
 
 #include "Reservation.h"
-/*#include "Graph.h"
+#include "Graph.h"
 #include "Road.h"
 #include "Node.h"
-#include "ReadFiles.h"*/
+#include "ReadFiles.h"
 #include <vector>
 
 class Van{
@@ -33,7 +33,7 @@ public:
 
 	bool is_Full() const;
 
-	//void getPath(Graph<Node, Road> &g, GraphViewer *gv) const;
+	void getPath(Graph<Node, Road> &g, GraphViewer *gv) const;
 };
 
 #endif
