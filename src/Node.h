@@ -1,30 +1,48 @@
-#ifndef NODE_H_
-#define NODE_H_
+#ifndef SRC_NODE_H_
+#define SRC_NODE_H_
 
-#include <vector>
+#include "Point.h"
 #include <string>
-#include <iostream>
+#include <cmath>
 
-class Subroad;
+using namespace std;
 
 class Node{
-	unsigned long ID;
-	double lat_deg;
-	double lon_deg;
-	double lat_rad;
-	double lon_rad;
-
+	unsigned int node_id;
+	string hotel;
+	Point p_degree;
+	Point p_radian;
 public:
-	Node(unsigned long ID, double lat_deg, double lon_deg, double lat_rad, double lon_rad);
-	unsigned long getId() const;
-	double getLatDeg() const;
-	double getLatRad() const;
-	double getLonDeg() const;
-	double getLonRad() const;
-	bool operator ==(const Node &n1) const;
-	bool operator !=(const Node &n1) const;
+	Node(int node_id, Point p_degree, Point p_radian, string hotel);
 
-	friend class Edge;
+	Point getPointDegree() const;
+	void setPointDegree(Point p_degree);
+
+	Point getPointRadian() const;
+	void setPointRadian(Point p_radian);
+
+	int getNodeId() const;
+	void setNodeId(int nodeId);
+
+	string getHotelName() const;
+	void setHotelName(string hotel);
+
+	bool operator==(const Node& rhs) const{
+		if(node_id == rhs.getNodeId()) return true;
+		return false;
+	}
+	bool operator < (const Node & rhs) const{
+		if(node_id < rhs.getNodeId()) return true;
+		return false;
+	}
+
+	bool operator != (const Node & rhs) const{
+		return (node_id != rhs.getNodeId());
+	}
 };
+
+
+
+
 
 #endif

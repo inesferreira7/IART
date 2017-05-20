@@ -1,42 +1,41 @@
-/*
- * Date.cpp
- *
- *  Created on: 23/04/2016
- *      Author: Joao
- */
-
 #include "Date.h"
 
-Date::Date(){
-	this->hour = 0;
-	this->min = 0;
-}
+using namespace std;
 
-/**
- * Date constructor
+/**Construtor of class Date
+ *
  */
-Date::Date(int hour, int min) {
-	this->hour = hour;
-	this->min = min;
-}
+Date:: Date(){}
+/**Construtor of class Date
+ * @param hour
+ * @param minutes
+ */
+Date:: Date( int hour, int minutes){
 
-int Date::getHour() const{
+	this-> hour= hour;
+	this->minutes=minutes;
+}
+/**Returns the hour
+ *
+ */
+int Date:: getHour() const {
 	return hour;
 }
-
-int Date::getMin() const{
-	return min;
+/**Modifies the hour
+ * @param hour new hour
+ */
+void Date:: setHour(int hour) {
+	this->hour = hour;
 }
-
-bool Date::operator <(const Date d1) const{
-	if (hour == d1.getHour())
-		return (min < d1.getMin());
-	else
-		return hour < d1.getHour();
+/**Returns the minutes
+ *
+ */
+int Date:: getMinutes() const {
+	return minutes;
 }
-
-bool Date::operator ==(const Date d1) const{
-	if (hour == d1.getHour() && min == d1.getMin())
-		return true;
-	return false;
+/**Modifies the minutes
+ * @param minutes new minutes
+ */
+void Date:: setMinutes(int minutes) {
+	this->minutes = minutes;
 }

@@ -1,39 +1,40 @@
-#ifndef VAN_H_
-#define VAN_H_
+#ifndef SRC_VAN_H_
+#define SRC_VAN_H_
 
+#include <iostream>
 #include "Reservation.h"
-#include "Graph.h"
-#include "Road.h"
-#include "Node.h"
-#include "ReadFiles.h"
 #include <vector>
 
+using namespace std;
+
 class Van{
-	int capacity;
-	int plate;
-	int ocupation;
-	bool isFull;
-	vector<Reservation> res;
+private:
+	string lPlate;
+	int nPassengers;
+	vector <vector<Reservation> > reservations;
+	vector<Date> dates;
+	vector<vector<string> > trips;
 public:
-	Van(int capacity);
-
-	int getCapacity() const;
-
-	int getPlate() const;
-
-	int getOcupation() const;
-
-	void incOcupation();
-
-	void resetOcupation();
-
-	vector<Reservation> getRes() const;
-
-	void addRes(Reservation res);
-
-	bool is_Full() const;
-
-	void getPath(Graph<Node, Road> &g, GraphViewer *gv) const;
+	Van();
+	Van(string lPlate, int nPassengers);
+	string getLPlate() const;
+	void setLPlate(const string& lPlate);
+	int getPassengers() const;
+	void setPassengers(int nPassengers);
+	const vector<Date> & getD() const ;
+	void setD(const vector<Date>& d);
+	const vector<vector<Reservation> >& getReservations() const;
+	void setReservations(const vector<vector<Reservation> >& reservations);
+	bool operator ==(const Van &v2){
+			if(lPlate == v2.getLPlate())
+				return true;
+			return false;
+		}
+	void addDate(Date &d);
+	void addReservations(vector<Reservation> r);
+	void setSortedTrips(vector<string> trip);
+	vector<vector<string> > getTrips() const;
 };
+
 
 #endif

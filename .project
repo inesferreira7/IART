@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>IART</name>
+	<name>CAL</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -19,6 +19,7 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
+		<nature>ch.hsr.ifs.cute.ui.cutenature</nature>
 		<nature>org.eclipse.cdt.core.cnature</nature>
 		<nature>org.eclipse.cdt.core.ccnature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>

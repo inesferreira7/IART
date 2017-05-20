@@ -1,42 +1,50 @@
 #include "Node.h"
 
-using namespace std;
+/**
+ * Constructor of class Node
+ * @param node_id
+ * @param p_degree
+ * @param p_radian
+ * @param hotel
+ */
+Node:: Node(int node_id, Point p_degree, Point p_radian, string hotel) : node_id(node_id), p_degree(p_degree), p_radian(p_radian), hotel(hotel){}
 
 /**
- * Node constructor
+ * Returns the Point in degrees
  */
-Node::Node(unsigned long ID, double lat_deg, double lon_deg, double lat_rad, double lon_rad){
-	this->ID = ID;
-	this->lat_deg = lat_deg;
-	this->lon_deg = lon_deg;
-	this->lat_rad = lat_rad;
-	this->lon_rad = lon_rad;
-}
+Point Node:: getPointDegree() const{return p_degree;}
+/**
+ * Modifies the Point in degrees
+ * @param p_degree new p_degree
+ */
+void Node:: setPointDegree(Point p_degree){this->p_degree = p_degree;}
 
-unsigned long Node::getId() const {
-	return ID;
-}
+/**
+ * Returns the Point in radians
+ */
+Point Node:: getPointRadian() const{return p_radian;}
+/**
+ * Modifies the Point in radians
+ * @param p_radian new p_radian
+ */
+void Node:: setPointRadian(Point p_radian){this->p_radian = p_radian;}
 
-double Node::getLatDeg() const {
-	return lat_deg;
-}
+/**
+ * Returns the node id
+ */
+int Node:: getNodeId() const {return node_id;}
+/**
+ * Modifies the node id
+ * @param nodeId new node_id
+ */
+void Node:: setNodeId(int nodeId){this->node_id = nodeId;}
 
-double Node::getLatRad() const {
-	return lat_rad;
-}
-
-double Node::getLonDeg() const {
-	return lon_deg;
-}
-
-double Node::getLonRad() const {
-	return lon_rad;
-}
-
-bool Node::operator ==(const Node &n1) const{
-	return (ID == n1.getId());
-}
-
-bool Node::operator !=(const Node &n1) const{
-	return (ID != n1.getId());
-}
+/**
+ * Returns the hotel name
+ */
+string Node:: getHotelName() const {return this->hotel;}
+/**
+ * Modifies the hotel name
+ * @param new hotel name
+ */
+void Node:: setHotelName(string hotel) {this->hotel = hotel;}

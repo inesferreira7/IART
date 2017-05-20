@@ -1,216 +1,126 @@
-#include "Transfer.h"
-#include "readFiles.h"
-//#include "matcher.h"
-#include <iostream>
-#include <conio.h>
-#include <iomanip>
-#include <ctime>
-
+#include "main.h"
+#include "FileReader.h"
 
 using namespace std;
 
+AirShuttle airShuttle;
 
-int mainMenu(Transfer a1);
-
-/**
- * Menu of the vans
+/**Display all the reservations
+ *
  */
-int VansMenu(Transfer a1){
-	system("cls");
+void diplayReservations() {
+	vector <Reservation> r = airShuttle.getReservations();
 
-	cout << "List of Vans:" << endl;
-
-	a1.transportClient();
-	getchar();
-
-	mainMenu(a1);
-	return 0;
+	for(unsigned int i=0; i < r.size(); i++){
+		cout << "ID: "<< r[i].getId()<< "; Passenger:  "<<r[i].getPassenger().getName()<< " "<<r[i].getPassenger().getNif()
+				<<"; Arrival: "<<r[i].getDate().getHour()<<":"<<r[i].getDate().getMinutes()
+				<<" Destination: "<<r[i].getDestination()<< endl;
+	}
+	mainMenu();
 }
-
-/**
- * Menu of the reservations
+/**Display all the vans
+ *
  */
-int ReservationsMenu(Transfer a1){
-	system("cls");
-	vector<string> hotels = getLocals();
+void displayVans(){
+	vector<Van> v = airShuttle.getVans();
+	for(unsigned int i=0; i < v.size(); i++){
+		cout<<"License Plate: "<<v[i].getLPlate()<<" Capacity: "<<v[i].getPassengers()<<endl;
+	}
+	mainMenu();
+}
+/**Display all the trips by van, date and order of route
+ *
+ */
+void displayTrips(){
+	vector <Van> v = airShuttle.getVans();
+	for (unsigned int i=0; i< v.size(); i++){
+		cout<<"Van "<<v[i].getLPlate()<<endl;
+		vector < vector <string> > trips = v[i].getTrips();
+		vector < Date > dates= v[i].getD();
+		for(unsigned int j=0; j < trips.size(); j++){
+			cout<<dates[j].getHour()<<":"<<dates[j].getMinutes()<<"- ";
+			for(unsigned int k=0; k < trips[j].size(); k++){
+				if(k == trips[j].size() -1)
+					cout<<trips[j][k];
+				else
+					cout<<trips[j][k]<<"->";
+			}
+			cout<<endl;
+		}
 
-	cout << setw(8) << "Name" << setw(15) << "NIF" << setw(20) << "ArrivalDate" << setw(30) << "Destination" << endl << endl;
-
-
-	for (int i = 0; i < a1.getReservations().size(); i++){
-		cout << setw(10) << a1.getReservations().at(i).getClientName();
-		cout << setw(12) << a1.getReservations().at(i).getArrivalDate().getHour() << ":" << a1.getReservations().at(i).getArrivalDate().getMin() <<
-				"h";
-		cout << setw(35) << hotels.at(a1.getReservations().at(i).getLocal() - 1) << endl;
 	}
 
-	getchar();
-	mainMenu(a1);
-
-	return 0;
+	mainMenu();
 }
-
-
-double Cli_ExatSearch(Transfer a1){
-	system("cls");
-	string cli;
-	cin.ignore(1000, '\n');
-
-	cout << "Write the name of the desired client: ";
-	getline(cin, cli);
-	cout << endl;
-
-	clock_t begin = clock();
-
-	//numStringMatching("clients.txt", cli);
-
-	clock_t end = clock();
-
-	double elapsed_time = double(end-begin) / CLOCKS_PER_SEC;
-
-	return elapsed_time;
-}
-
-double Cli_AproxSearch(Transfer a1){
-	system("cls");
-	string cli;
-	cin.ignore(1000, '\n');
-
-	cout << "Write the name of the  desired client: ";
-	getline(cin, cli);
-	cout << endl;
-	string final = cli + ";";
-	clock_t begin = clock();
-
-
-	//numApproximateStringMatching("clients.txt", final);
-
-	clock_t end = clock();
-
-	double elapsed_time = double(end-begin) / CLOCKS_PER_SEC;
-
-
-	return elapsed_time;
-}
-
-double Dest_ExatSearch(Transfer a1){
-	system("cls");
-	string dest;
-	cin.ignore(1000, '\n');
-
-	cout << "Write the name of the desired hotel: ";
-	getline(cin, dest);
-	cout << endl;
-
-	string final = ";" + dest + ";";
-
-	clock_t begin = clock();
-
-	//numStringMatching("reservation.txt", final);
-
-	clock_t end = clock();
-
-	double elapsed_time = double(end-begin) / CLOCKS_PER_SEC;
-
-	return elapsed_time;
-}
-
-double Dest_AproxSearch(Transfer a1){
-	system("cls");
-	string dest;
-	cin.ignore(1000, '\n');
-
-	cout << "Write the name of the desired hotel: ";
-	getline(cin, dest);
-	cout << endl;
-
-	string final = ";" + dest + ";";
-
-	clock_t begin = clock();
-
-	//numApproximateStringMatching("reservation.txt", final);
-
-	clock_t end = clock();
-
-	double elapsed_time = double(end-begin) / CLOCKS_PER_SEC;
-
-	return elapsed_time;
-}
-
-/**
- * Main menu
+/**Display all the groups of passengers that travel together
+ *
  */
-int mainMenu(Transfer a1){
+void displayGroups(){
+	vector <Van> v = airShuttle.getVans();
+
+	for(unsigned int i=0; i< v.size(); i++){
+		cout<<"Van: "<<v[i].getLPlate()<<endl;
+		vector <vector <Reservation> > groups = v[i].getReservations();
+		for(unsigned int j=0; j < groups.size(); j++ ){
+			for(unsigned int k=0; k < groups[j].size(); k++){
+				cout<<groups[j][k].getPassenger().getName()<<"; ";
+			}
+			cout<<endl;
+		}
+	}
+	mainMenu();
+}
+/**Main menu Function
+ *
+ */
+void mainMenu(){
+	cout<<"1- Show all reservations \n";
+	cout<<"2- Show all vans \n";
+	cout<<"3- Show passenger groups \n";
+	cout<<"4- Show trips \n";
+	cout<<"5- Exit \n";
 
 	int option;
-	double res;
 
-	cout << "#################" << endl;
-	cout << "#               #" << endl;
-	cout << "#  AIR SHUTTLE  #" << endl;
-	cout << "#               #" << endl;
-	cout << "#################" << endl;
-
-	cout << endl << endl << "1 - Reservations" << endl;
-	cout << "2 - Vans" << endl;
-	cout << "3 - Transport passengers" << endl;
-	cout << "4 - Pesquisa Cliente Exata" << endl;
-	cout << "5 - Pesquisa Cliente Aproximada" << endl;
-	cout << "6 - Pesquisa Destino Exata" << endl;
-	cout << "7 - Pesquisa Destino Aproximada" << endl;
-	cout << "8 - Exit" << endl;
-	cin >> option;
-	switch (option){
+	cin>> option;
+	switch(option){
 	case 1:
-		ReservationsMenu(a1);
+		diplayReservations();
 		break;
 	case 2:
-		VansMenu(a1);
+		displayVans();
 		break;
 	case 3:
-		getchar();
-		a1.showPath();
-		mainMenu(a1);
+		displayGroups();
 		break;
 	case 4:
-		res = Cli_ExatSearch(a1);
-		getchar();
-		cout << endl << res << endl;
-		mainMenu(a1);
+		displayTrips();
 		break;
 	case 5:
-		res = Cli_AproxSearch(a1);
-		getchar();
-		cout << endl << res << endl;
-		mainMenu(a1);
-		break;
-	case 6:
-		res = Dest_ExatSearch(a1);
-		getchar();
-		cout << endl << res << endl;
-		mainMenu(a1);
-		break;
-	case 7:
-		res = Dest_AproxSearch(a1);
-		getchar();
-		cout << endl << res << endl;
-		mainMenu(a1);
-		break;
-	case 8:
-		exit(0);
+		return;
+	default:
+		cout<<"Invalid option. Insert new one \n";
+		mainMenu();
 		break;
 	}
 }
 
+/**Main Funtion
+ *
+ */
 int main(){
-	Transfer a1;
-	a1.loadGraph();
-
-	a1.loadReservations();
-	a1.loadVans();
-
-	mainMenu(a1);
-
-
+	Graph<Node,Road> g;
+	loadGraph(g);
+	airShuttle = AirShuttle();
+	readReservations(airShuttle);
+	readVans(airShuttle);
+	airShuttle.distributePassengers();
+	clock_t begin = clock();
+	for(unsigned int i=0; i < airShuttle.getVans().size(); i++ )
+		airShuttle.sortDistributions(g,i+1);
+	clock_t end = clock();
+	double elapsed = double(end - begin) / CLOCKS_PER_SEC;
+	cout << "Elapsed time: " << setprecision(10) << elapsed << endl;
+	mainMenu();
 	return 0;
 }

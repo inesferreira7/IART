@@ -1,24 +1,30 @@
-#ifndef ROAD_H_
-#define  ROAD_H_
+#ifndef SRC_ROAD_H_
+#define SRC_ROAD_H_
 
 #include <string>
 
 using namespace std;
 
 class Road{
-	unsigned long ID;
-	string name;
-	bool two_way;
-	bool acessible;
+	int road_id;
+	string road_name;
+	bool is_two_way;
+	bool is_obstructed;
 public:
-	Road(unsigned long ID, string name, bool two_way);
-	unsigned long getID() const;
-	bool is_two_way() const;
-	string getName() const;
-	void block();
-	bool getState() const;
-	bool operator ==(const Road r1) const;
-};
+	Road();
+	Road(int road_id, string road_name, bool is_two_way);
 
+	bool isIsTwoWay() const;
+	void setIsTwoWay(bool isTwoWay);
+
+	int getRoadId() const;
+	void setRoadId(int roadId);
+
+	const string& getRoadName() const;
+	void setRoadName(const string& roadName);
+
+	bool getObstructed() const;
+	void setObstructed(bool isObstructed);
+};
 
 #endif
