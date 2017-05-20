@@ -184,8 +184,8 @@ void AirShuttle:: sortDistributions(Graph<Node,Road> &g, unsigned int vanNumber)
 		Date pDate;
 		unsigned int cnt = 0;
 
-		g.dijkstraShortestPath(g.getVertex(1)->getInfo());
-		//g.aStarPath(g.getVertex(1)->getInfo(),g.getVertex(1)->getInfo());
+		//g.dijkstraShortestPath(g.getVertex(1)->getInfo());
+		g.aStarPath(g.getVertex(1)->getInfo(),g.getVertex(1)->getInfo());
 		fullPath = g.getPath(g.getVertex(1)->getInfo(), g.getVertex(path[cnt].getDestination())->getInfo());
 		for(unsigned int o = 1; o < fullPath.size(); o++){
 			if(fullPath[o].getHotelName() != ""){
@@ -193,15 +193,15 @@ void AirShuttle:: sortDistributions(Graph<Node,Road> &g, unsigned int vanNumber)
 			}
 		}
 
-		g.dijkstraShortestPath(g.getVertex(path[cnt].getDestination())->getInfo());
-		//g.aStarPath(g.getVertex(path[cnt].getDestination())->getInfo(),g.getVertex(1)->getInfo());
+		//g.dijkstraShortestPath(g.getVertex(path[cnt].getDestination())->getInfo());
+		g.aStarPath(g.getVertex(path[cnt].getDestination())->getInfo(),g.getVertex(1)->getInfo());
 
 		for(unsigned int p = 0; p < path.size(); p++){
 			if(cnt + 1 < path.size()){
 				temp = g.getPath(g.getVertex(path[cnt].getDestination())->getInfo(), g.getVertex(path[cnt+1].getDestination())->getInfo());
 				cnt++;
-				g.dijkstraShortestPath(g.getVertex(path[cnt].getDestination())->getInfo());
-				//g.aStarPath(g.getVertex(path[cnt].getDestination())->getInfo(),g.getVertex(1)->getInfo());
+				//g.dijkstraShortestPath(g.getVertex(path[cnt].getDestination())->getInfo());
+				g.aStarPath(g.getVertex(path[cnt].getDestination())->getInfo(),g.getVertex(1)->getInfo());
 			}
 			for(unsigned int f = 0; f < fullPath.size(); f++){
 				for(unsigned int t = 0; t < temp.size(); t++){

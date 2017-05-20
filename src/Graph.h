@@ -627,7 +627,7 @@ void Graph<N,R>::aStarPath(const N &initial, const N &final) {
 			int dy = abs(f->getInfo().getPointDegree().getY() - w->getInfo().getPointDegree().getY());
 			w->heuristic = sqrt(dx*dx + dy*dy);
 
-			if(v->dist + v->adj[i].weight < w->dist) {
+			if(v->dist + v->adj[i].weight + v->heuristic< w->dist) {
 
 				//cout << "cost = " << v->dist + v->adj[i].weight << endl << "heuristic= " << v->heuristic;
 
