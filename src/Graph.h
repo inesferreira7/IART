@@ -574,8 +574,6 @@ void Graph<N,R>::unweightedShortestPath(const N &s) {
 
 template<class N, class R>
 void Graph<N,R>::dijkstraShortestPath(const N &s) {
-	int counter = 0;
-
 	for(unsigned int i = 0; i < vertexSet.size(); i++) {
 		vertexSet[i]->path = NULL;
 		vertexSet[i]->dist = INT_INFINITY;
@@ -592,12 +590,9 @@ void Graph<N,R>::dijkstraShortestPath(const N &s) {
 
 
 	while( !pq.empty() ) {
-		//usleep(10);
 		v = pq.front();
 		pop_heap(pq.begin(), pq.end());
 		pq.pop_back();
-
-		//cout << "processing node " << v->getInfo().getNodeId() << endl;
 
 		for(unsigned int i = 0; i < v->adj.size(); i++) {
 
@@ -605,7 +600,6 @@ void Graph<N,R>::dijkstraShortestPath(const N &s) {
 			gv->setVertexColor(w->getInfo().getNodeId(), "RED");
 
 			if(v->dist + v->adj[i].weight < w->dist ) {
-				//cout << "processing node " << w->getInfo().getNodeId() << endl;
 
 				w->dist = v->dist + v->adj[i].weight;
 				w->path = v;
@@ -619,8 +613,6 @@ void Graph<N,R>::dijkstraShortestPath(const N &s) {
 				//se já estiver na lista, apenas a actualiza
 				if(!w->processing)
 				{
-					counter++;
-					//cout << "o no com id= " << w->getInfo().getNodeId() << "foi colocado na pq" << endl;
 					w->processing = true;
 					pq.push_back(w);
 				}
@@ -629,13 +621,10 @@ void Graph<N,R>::dijkstraShortestPath(const N &s) {
 			}
 		}
 	}
-	//cout << "processados: " << counter << endl;
 }
 
 template<class N, class R>
 void Graph<N,R>::aStarPath(const N &initial, const N &final) {
-	int counter = 0;
-
 	for(unsigned int i = 0; i < vertexSet.size(); i++) {
 		vertexSet[i]->path = NULL;
 		vertexSet[i]->dist = INT_INFINITY;
@@ -654,19 +643,15 @@ void Graph<N,R>::aStarPath(const N &initial, const N &final) {
 
 
 	while( !pq.empty() ) {
-		//usleep(10);
 		v = pq.front();
 		pop_heap(pq.begin(), pq.end());
 		pq.pop_back();
-
-		//cout << "processing node " << v->getInfo().getNodeId() << endl;
 
 		for(unsigned int i = 0; i < v->adj.size(); i++) {
 			Vertex<N,R>* w = v->adj[i].dest;
 			gv->setVertexColor(w->getInfo().getNodeId(), "RED");
 
 			if(v->dist + v->adj[i].weight + v->heuristic < w->dist) {
-				//cout << "processing node " << w->getInfo().getNodeId() << endl;
 
 				gv->setEdgeColor(v->adj[i].id, "RED");
 				gv->setEdgeColor(v->adj[i].id + 1, "RED");
@@ -674,20 +659,16 @@ void Graph<N,R>::aStarPath(const N &initial, const N &final) {
 				gv->setEdgeThickness(v->adj[i].id + 1, 3);
 				gv->rearrange();
 
-				//cout << "heuristic= " << v->heuristic << endl << "cost= " << v->dist + v->adj[i].weight << endl;
-
 				w->dist = v->dist + v->adj[i].weight + v->heuristic;
 				w->path = v;
 
 				//se já estiver na lista, apenas a actualiza
 				if(!w->processing)
 				{
-					counter++;
 					w->processing = true;
 					pq.push_back(w);
 
 					if(w == f){
-						//cout << "processados: " << counter << endl;
 						make_heap (pq.begin(),pq.end(),vertex_greater_than<N,R>());
 						return;
 					}
@@ -697,7 +678,6 @@ void Graph<N,R>::aStarPath(const N &initial, const N &final) {
 			}
 		}
 	}
-	//cout << "processados: " << counter << endl;
 }
 
 template<class N, class R>

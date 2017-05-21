@@ -5,7 +5,7 @@
 6;Hugo;91238;12;23;Hotel2
 1;Joana;2255;13;30;Hotel3
 4;Rui Luis;85452;13;38;Hotel1
-7;João Chaves;847452;15;00;Hotel4
+7;Joao Chaves;847452;15;00;Hotel4
 8;Nuno Castro;14558;15;30;Hotel4
 9;Sara Santos;74282;16;05;Hotel3
 10;Ines Ferreira;125410;16;25;Hotel1
