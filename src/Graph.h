@@ -14,6 +14,7 @@
 #include "Reservation.h"
 #include <algorithm>
 #include <unistd.h>
+#include "graphviewer.h"
 
 using namespace std;
 
@@ -45,7 +46,7 @@ public:
 	Vertex(N in);
 	friend class Graph<N,R>;
 
-	void addEdge(Vertex<N,R> *dest,R road, double w);
+	void addEdge(Vertex<N,R> *dest,R road, double w, int id);
 	bool removeEdgeTo(Vertex<N,R> *d);
 
 	N getInfo() const;
@@ -72,8 +73,9 @@ class Edge {
 	Vertex<N,R> * dest;
 	R road;
 	double weight;
+	int id;
 public:
-	Edge(Vertex<N,R> *d, R road, double w);
+	Edge(Vertex<N,R> *d, R road, double w, int id);
 	void setRoad(R road);
 	R getRoad() const;
 	friend class Graph<N,R>;
@@ -89,6 +91,8 @@ class Graph {
 	vector<Vertex<N,R>*> vertexSet;
 	void dfs(Vertex<N,R> *v, vector<N> &res) const;
 
+	GraphViewer * gv;
+
 
 	int numCycles;
 	void dfsVisit(Vertex<N,R> *v);
@@ -97,7 +101,7 @@ class Graph {
 
 public:
 	bool addVertex(const N &in);
-	bool addEdge(const N &sourc, const N &dest,R road, double w);
+	bool addEdge(const N &sourc, const N &dest,R road, double w, int id);
 	bool removeVertex(const N &in);
 	bool removeEdge(const N &sourc, const N &dest);
 	vector<N> dfs() const;
@@ -119,6 +123,10 @@ public:
 	void dijkstraShortestPath(const N &initial);
 	void aStarPath(const N &initial, const N &final);
 	int calcHeuristic(vector<Reservation> reservations);
+
+	void setGv(GraphViewer * gv) {
+			this->gv = gv;
+		}
 };
 
 /*
@@ -154,8 +162,8 @@ Vertex<N,R>::Vertex(N in): info(in), visited(false), processing(false), indegree
 }
 
 template <class N, class R>
-void Vertex<N,R>::addEdge(Vertex<N,R> *dest,R road, double w) {
-	Edge<N,R> edgeD(dest,road,w);
+void Vertex<N,R>::addEdge(Vertex<N,R> *dest,R road, double w, int id) {
+	Edge<N,R> edgeD(dest,road,w,id);
 	adj.push_back(edgeD);
 }
 
@@ -199,7 +207,7 @@ int Vertex<N,R>:: getNumCli() const{
  * ================================================================================================
  */
 template <class N, class R>
-Edge<N,R>::Edge(Vertex<N,R> *d, R road, double w): dest(d), weight(w), road(road){}
+Edge<N,R>::Edge(Vertex<N,R> *d, R road, double w, int id): dest(d), weight(w), road(road), id(id){}
 
 template <class N, class R>
 void Edge<N,R>::setRoad(R road){this->road = road;}
@@ -270,7 +278,7 @@ bool Graph<N,R>::removeVertex(const N &in) {
 }
 
 template <class N, class R>
-bool Graph<N,R>::addEdge(const N &sourc, const N &dest,R road, double w) {
+bool Graph<N,R>::addEdge(const N &sourc, const N &dest,R road, double w, int id) {
 	typename vector<Vertex<N,R>*>::iterator it= vertexSet.begin();
 	typename vector<Vertex<N,R>*>::iterator ite= vertexSet.end();
 	int found=0;
@@ -284,7 +292,7 @@ bool Graph<N,R>::addEdge(const N &sourc, const N &dest,R road, double w) {
 	}
 	if (found!=2) return false;
 	vD->indegree++;
-	vS->addEdge(vD,road,w);
+	vS->addEdge(vD,road,w, id);
 
 	return true;
 }
@@ -584,7 +592,7 @@ void Graph<N,R>::dijkstraShortestPath(const N &s) {
 
 
 	while( !pq.empty() ) {
-		usleep(10);
+		//usleep(10);
 		v = pq.front();
 		pop_heap(pq.begin(), pq.end());
 		pq.pop_back();
@@ -592,13 +600,21 @@ void Graph<N,R>::dijkstraShortestPath(const N &s) {
 		//cout << "processing node " << v->getInfo().getNodeId() << endl;
 
 		for(unsigned int i = 0; i < v->adj.size(); i++) {
+
 			Vertex<N,R>* w = v->adj[i].dest;
+			gv->setVertexColor(w->getInfo().getNodeId(), "RED");
 
 			if(v->dist + v->adj[i].weight < w->dist ) {
 				//cout << "processing node " << w->getInfo().getNodeId() << endl;
 
 				w->dist = v->dist + v->adj[i].weight;
 				w->path = v;
+
+				gv->setEdgeColor(v->adj[i].id, "RED");
+				gv->setEdgeColor(v->adj[i].id + 1, "RED");
+				gv->setEdgeThickness(v->adj[i].id, 3);
+				gv->setEdgeThickness(v->adj[i].id + 1, 3);
+				gv->rearrange();
 
 				//se já estiver na lista, apenas a actualiza
 				if(!w->processing)
@@ -638,7 +654,7 @@ void Graph<N,R>::aStarPath(const N &initial, const N &final) {
 
 
 	while( !pq.empty() ) {
-		usleep(10);
+		//usleep(10);
 		v = pq.front();
 		pop_heap(pq.begin(), pq.end());
 		pq.pop_back();
@@ -647,9 +663,16 @@ void Graph<N,R>::aStarPath(const N &initial, const N &final) {
 
 		for(unsigned int i = 0; i < v->adj.size(); i++) {
 			Vertex<N,R>* w = v->adj[i].dest;
+			gv->setVertexColor(w->getInfo().getNodeId(), "RED");
 
 			if(v->dist + v->adj[i].weight + v->heuristic < w->dist) {
 				//cout << "processing node " << w->getInfo().getNodeId() << endl;
+
+				gv->setEdgeColor(v->adj[i].id, "RED");
+				gv->setEdgeColor(v->adj[i].id + 1, "RED");
+				gv->setEdgeThickness(v->adj[i].id, 3);
+				gv->setEdgeThickness(v->adj[i].id + 1, 3);
+				gv->rearrange();
 
 				//cout << "heuristic= " << v->heuristic << endl << "cost= " << v->dist + v->adj[i].weight << endl;
 

@@ -26,6 +26,7 @@ void loadGraph(Graph<Node,Road> &g){
 	readSubRoads(g,roads);
 
 	gv->rearrange();
+	g.setGv(gv);
 }
 /**Finds a node with a certain ID in a graph
  * @param g graph being searched
@@ -130,7 +131,7 @@ void readSubRoads(Graph<Node,Road> &g, vector<Road> roads){
 	string line;
 	int road_id, node1_id, node2_id;
 	infile.open(SUBROADS);
-
+	int counter  = 1;
 	while(getline(infile,line)){
 		stringstream linestream(line);
 		string data;
@@ -151,14 +152,14 @@ void readSubRoads(Graph<Node,Road> &g, vector<Road> roads){
 		Road r = findRoad(roads, road_id);
 
 		if(r.isIsTwoWay()){
-			g.addEdge(node_1,node_2,r,distance);
-			g.addEdge(node_2,node_1,r,distance);
+			g.addEdge(node_1,node_2,r,distance, counter);
+			g.addEdge(node_2,node_1,r,distance, counter);
 			gv->addEdge(road_id,node1_id,node2_id,EdgeType::UNDIRECTED);
 		}else{
-			g.addEdge(node_1,node_2,r,distance);
+			g.addEdge(node_1,node_2,r,distance, counter);
 			gv->addEdge(road_id,node1_id,node2_id,EdgeType::UNDIRECTED);
 		}
-
+		counter++;
 	}
 
 	infile.close();
