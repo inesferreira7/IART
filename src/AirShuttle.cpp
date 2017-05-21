@@ -171,7 +171,7 @@ vector<Reservation> AirShuttle:: getReservationByDate(Date &d){
  * @param g graph that represents the location map
  * @param vanNumber represents the van
  */
-void AirShuttle:: sortDistributions(Graph<Node,Road> &g, unsigned int vanNumber){
+void AirShuttle:: sortDistributions(Graph<Node,Road> &g, unsigned int vanNumber, int type){
 	vector<vector<Reservation> > res = vans[vanNumber-1].getReservations();
 
 	for(unsigned int r = 0; r < res.size(); r++){
@@ -184,8 +184,13 @@ void AirShuttle:: sortDistributions(Graph<Node,Road> &g, unsigned int vanNumber)
 		Date pDate;
 		unsigned int cnt = 0;
 
-		//g.dijkstraShortestPath(g.getVertex(1)->getInfo());
-		g.aStarPath(g.getVertex(1)->getInfo(),g.getVertex(1)->getInfo());
+		int last = g.calcHeuristic(reservations);
+
+		if(type == 1)
+			g.dijkstraShortestPath(g.getVertex(1)->getInfo());
+		else
+			g.aStarPath(g.getVertex(1)->getInfo(),g.getVertex(last)->getInfo());
+
 		fullPath = g.getPath(g.getVertex(1)->getInfo(), g.getVertex(path[cnt].getDestination())->getInfo());
 		for(unsigned int o = 1; o < fullPath.size(); o++){
 			if(fullPath[o].getHotelName() != ""){
@@ -193,16 +198,12 @@ void AirShuttle:: sortDistributions(Graph<Node,Road> &g, unsigned int vanNumber)
 			}
 		}
 
-		//g.dijkstraShortestPath(g.getVertex(path[cnt].getDestination())->getInfo());
-		g.aStarPath(g.getVertex(path[cnt].getDestination())->getInfo(),g.getVertex(1)->getInfo());
-
 		for(unsigned int p = 0; p < path.size(); p++){
 			if(cnt + 1 < path.size()){
 				temp = g.getPath(g.getVertex(path[cnt].getDestination())->getInfo(), g.getVertex(path[cnt+1].getDestination())->getInfo());
 				cnt++;
-				//g.dijkstraShortestPath(g.getVertex(path[cnt].getDestination())->getInfo());
-				g.aStarPath(g.getVertex(path[cnt].getDestination())->getInfo(),g.getVertex(1)->getInfo());
 			}
+
 			for(unsigned int f = 0; f < fullPath.size(); f++){
 				for(unsigned int t = 0; t < temp.size(); t++){
 					if(fullPath[f].getNodeId() == temp[t].getNodeId()){
@@ -210,12 +211,14 @@ void AirShuttle:: sortDistributions(Graph<Node,Road> &g, unsigned int vanNumber)
 					}
 				}
 			}
+
 			for(unsigned int o = 1; o < temp.size(); o++){
 				fullPath.push_back(temp[o]);
 				if(temp[o].getHotelName() != ""){
 					final.push_back(temp[o].getHotelName());
 				}
 			}
+
 			if(fullPath[fullPath.size() - 1].getNodeId() == fullPath[fullPath.size()-2].getNodeId()){
 				fullPath.pop_back();
 				final.pop_back();

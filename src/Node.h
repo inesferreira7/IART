@@ -4,6 +4,7 @@
 #include "Point.h"
 #include <string>
 #include <cmath>
+#include<iostream>
 
 using namespace std;
 
@@ -12,6 +13,7 @@ class Node{
 	string hotel;
 	Point p_degree;
 	Point p_radian;
+	int num_cli;
 public:
 	Node(int node_id, Point p_degree, Point p_radian, string hotel);
 
@@ -40,9 +42,4 @@ public:
 		return (node_id != rhs.getNodeId());
 	}
 };
-
-
-
-
-
 #endif

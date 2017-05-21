@@ -52,6 +52,58 @@ void displayTrips(){
 
 	mainMenu();
 }
+
+void solveDijkstra(Graph<Node,Road> g){
+	clock_t begin = clock();
+	for(unsigned int i=0; i < airShuttle.getVans().size(); i++ )
+		airShuttle.sortDistributions(g,i+1, 1);
+	clock_t end = clock();
+	double elapsed = double(end - begin) / CLOCKS_PER_SEC;
+	cout << "Elapsed time: " << setprecision(10) << elapsed << " seconds. \n" << endl;
+
+	mainMenu();
+}
+
+void solveAStar(Graph<Node,Road> g){
+	clock_t begin = clock();
+	for(unsigned int i=0; i < airShuttle.getVans().size(); i++ )
+		airShuttle.sortDistributions(g,i+1, 2);
+	clock_t end = clock();
+	double elapsed = double(end - begin) / CLOCKS_PER_SEC;
+	cout << "Elapsed time: " << setprecision(10) << elapsed << " seconds. \n" << endl;
+
+	mainMenu();
+}
+
+void displayAlgorithms(){
+	Graph<Node,Road> g;
+	loadGraph(g);
+	airShuttle = AirShuttle();
+	readReservations(airShuttle);
+	readVans(airShuttle);
+	addRestoGraph(g, airShuttle.getReservations());
+	airShuttle.distributePassengers();
+
+	cout<<"1- Dijkstra's Shortest Path Algorithm \n";
+	cout<<"2- A Star Algorithm \n";
+
+	int option;
+
+		cin>> option;
+		switch(option){
+		case 1:
+			solveDijkstra(g);
+			break;
+		case 2:
+			solveAStar(g);
+			break;
+		default:
+			cout<<"Invalid option. Insert new one \n";
+			displayAlgorithms();
+			break;
+		}
+}
+
 /**Display all the groups of passengers that travel together
  *
  */
@@ -78,7 +130,8 @@ void mainMenu(){
 	cout<<"2- Show all vans \n";
 	cout<<"3- Show passenger groups \n";
 	cout<<"4- Show trips \n";
-	cout<<"5- Exit \n";
+	cout<<"5- Run algorithm \n";
+	cout<<"6- Exit \n";
 
 	int option;
 
@@ -97,7 +150,10 @@ void mainMenu(){
 		displayTrips();
 		break;
 	case 5:
+		displayAlgorithms();
 		return;
+	case 6:
+		exit(0);
 	default:
 		cout<<"Invalid option. Insert new one \n";
 		mainMenu();
@@ -109,18 +165,6 @@ void mainMenu(){
  *
  */
 int main(){
-	Graph<Node,Road> g;
-	loadGraph(g);
-	airShuttle = AirShuttle();
-	readReservations(airShuttle);
-	readVans(airShuttle);
-	airShuttle.distributePassengers();
-	clock_t begin = clock();
-	for(unsigned int i=0; i < airShuttle.getVans().size(); i++ )
-		airShuttle.sortDistributions(g,i+1);
-	clock_t end = clock();
-	double elapsed = double(end - begin) / CLOCKS_PER_SEC;
-	cout << "Elapsed time: " << setprecision(10) << elapsed << endl;
 	mainMenu();
 	return 0;
 }

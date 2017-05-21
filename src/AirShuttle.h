@@ -31,7 +31,7 @@ public:
 	vector<Reservation> getReservationByDate(Date &d);
 	void setReservations(vector<Reservation> res);
 	void distributePassengers();
-	void sortDistributions(Graph<Node,Road> &g, unsigned int vanNumber);
+	void sortDistributions(Graph<Node,Road> &g, unsigned int vanNumber, int type);
 	vector<Reservation> sortTrips(vector<Node> path, Date pDate);
 };
 

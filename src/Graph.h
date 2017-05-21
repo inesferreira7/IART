@@ -11,6 +11,9 @@
 #include <cmath>
 #include <cstddef>
 #include <iostream>
+#include "Reservation.h"
+#include <algorithm>
+#include <unistd.h>
 
 using namespace std;
 
@@ -36,6 +39,7 @@ class Vertex {
 	int indegree;
 	int dist;
 	double heuristic;
+	int num_cli;
 public:
 
 	Vertex(N in);
@@ -46,6 +50,10 @@ public:
 
 	N getInfo() const;
 	void setInfo(N info);
+
+	void addCli();
+
+	int getNumCli() const;
 
 	int getDist() const;
 	int getIndegree() const;
@@ -110,6 +118,7 @@ public:
 	bool isDAG();
 	void dijkstraShortestPath(const N &initial);
 	void aStarPath(const N &initial, const N &final);
+	int calcHeuristic(vector<Reservation> reservations);
 };
 
 /*
@@ -140,7 +149,7 @@ bool Vertex<N,R>::removeEdgeTo(Vertex<N,R> *d) {
 }
 
 template <class N, class R>
-Vertex<N,R>::Vertex(N in): info(in), visited(false), processing(false), indegree(0), dist(0) {
+Vertex<N,R>::Vertex(N in): info(in), visited(false), processing(false), indegree(0), dist(0), num_cli(0){
 	path = NULL;
 }
 
@@ -173,6 +182,16 @@ int Vertex<N,R>::getIndegree() const {
 template <class N, class R>
 vector<Edge<N,R>  > Vertex<N,R>:: getAdj() const{
 	return this->adj;
+}
+
+template <class N, class R>
+void Vertex<N,R>:: addCli(){
+	this->num_cli++;
+}
+
+template <class N, class R>
+int Vertex<N,R>:: getNumCli() const{
+	return this->num_cli;
 }
 
 /* ================================================================================================
@@ -547,6 +566,7 @@ void Graph<N,R>::unweightedShortestPath(const N &s) {
 
 template<class N, class R>
 void Graph<N,R>::dijkstraShortestPath(const N &s) {
+	int counter = 0;
 
 	for(unsigned int i = 0; i < vertexSet.size(); i++) {
 		vertexSet[i]->path = NULL;
@@ -564,15 +584,18 @@ void Graph<N,R>::dijkstraShortestPath(const N &s) {
 
 
 	while( !pq.empty() ) {
-
+		usleep(10);
 		v = pq.front();
 		pop_heap(pq.begin(), pq.end());
 		pq.pop_back();
+
+		//cout << "processing node " << v->getInfo().getNodeId() << endl;
 
 		for(unsigned int i = 0; i < v->adj.size(); i++) {
 			Vertex<N,R>* w = v->adj[i].dest;
 
 			if(v->dist + v->adj[i].weight < w->dist ) {
+				//cout << "processing node " << w->getInfo().getNodeId() << endl;
 
 				w->dist = v->dist + v->adj[i].weight;
 				w->path = v;
@@ -580,6 +603,8 @@ void Graph<N,R>::dijkstraShortestPath(const N &s) {
 				//se já estiver na lista, apenas a actualiza
 				if(!w->processing)
 				{
+					counter++;
+					//cout << "o no com id= " << w->getInfo().getNodeId() << "foi colocado na pq" << endl;
 					w->processing = true;
 					pq.push_back(w);
 				}
@@ -588,10 +613,12 @@ void Graph<N,R>::dijkstraShortestPath(const N &s) {
 			}
 		}
 	}
+	//cout << "processados: " << counter << endl;
 }
 
 template<class N, class R>
 void Graph<N,R>::aStarPath(const N &initial, const N &final) {
+	int counter = 0;
 
 	for(unsigned int i = 0; i < vertexSet.size(); i++) {
 		vertexSet[i]->path = NULL;
@@ -604,10 +631,6 @@ void Graph<N,R>::aStarPath(const N &initial, const N &final) {
 	Vertex<N,R>* v = getVertex(initial);
 	v->dist = 0;
 
-	int dx = abs(v->getInfo().getPointDegree().getX() - f->getInfo().getPointDegree().getX());
-	int dy = abs(v->getInfo().getPointDegree().getY() - f->getInfo().getPointDegree().getY());
-	v->heuristic = sqrt(dx*dx + dy*dy);
-
 	vector< Vertex<N,R>* > pq;
 	pq.push_back(v);
 
@@ -615,21 +638,20 @@ void Graph<N,R>::aStarPath(const N &initial, const N &final) {
 
 
 	while( !pq.empty() ) {
-
+		usleep(10);
 		v = pq.front();
 		pop_heap(pq.begin(), pq.end());
 		pq.pop_back();
 
+		//cout << "processing node " << v->getInfo().getNodeId() << endl;
+
 		for(unsigned int i = 0; i < v->adj.size(); i++) {
 			Vertex<N,R>* w = v->adj[i].dest;
 
-			int dx = abs(f->getInfo().getPointDegree().getX() - w->getInfo().getPointDegree().getX());
-			int dy = abs(f->getInfo().getPointDegree().getY() - w->getInfo().getPointDegree().getY());
-			w->heuristic = sqrt(dx*dx + dy*dy);
+			if(v->dist + v->adj[i].weight + v->heuristic < w->dist) {
+				//cout << "processing node " << w->getInfo().getNodeId() << endl;
 
-			if(v->dist + v->adj[i].weight + v->heuristic< w->dist) {
-
-				//cout << "cost = " << v->dist + v->adj[i].weight << endl << "heuristic= " << v->heuristic;
+				//cout << "heuristic= " << v->heuristic << endl << "cost= " << v->dist + v->adj[i].weight << endl;
 
 				w->dist = v->dist + v->adj[i].weight + v->heuristic;
 				w->path = v;
@@ -637,19 +659,63 @@ void Graph<N,R>::aStarPath(const N &initial, const N &final) {
 				//se já estiver na lista, apenas a actualiza
 				if(!w->processing)
 				{
+					counter++;
 					w->processing = true;
 					pq.push_back(w);
 
-					/*if(w == f){
+					if(w == f){
+						//cout << "processados: " << counter << endl;
 						make_heap (pq.begin(),pq.end(),vertex_greater_than<N,R>());
 						return;
-					}*/
+					}
 				}
 
-				make_heap (pq.begin(),pq.end(),vertex_greater_than<N,R>());
+				make_heap(pq.begin(),pq.end(),vertex_greater_than<N,R>());
 			}
 		}
 	}
+	//cout << "processados: " << counter << endl;
+}
+
+template<class N, class R>
+int Graph<N,R>::calcHeuristic(const vector<Reservation> reservations) {
+	vector<string> dest;
+
+	Vertex<N,R>* v = getVertex(1);
+	v->dist = 0;
+
+	Vertex<N,R>* f = v;
+
+	int final_id;
+
+	v->heuristic = 0;
+	for(int j = 0; j < reservations.size(); j++){
+		dest.push_back(reservations[j].getDestination());
+	}
+
+	for(unsigned int i = 0; i < vertexSet.size(); i++){
+		Vertex<N,R>* temp = vertexSet.at(i);
+		int d1x = abs(v->getInfo().getPointDegree().getX() - temp->getInfo().getPointDegree().getX());
+		int d1y = abs(v->getInfo().getPointDegree().getY() - temp->getInfo().getPointDegree().getY());
+		int heur = sqrt(d1x*d1x + d1y*d1y);
+		if(heur > f->heuristic && find(dest.begin(), dest.end(), temp->getInfo().getHotelName()) != dest.end()){
+			f= temp;
+			final_id = temp->getInfo().getNodeId();
+		}
+	}
+
+	f= getVertex(final_id);
+
+	for(unsigned int k = 0; k < vertexSet.size(); k++){
+		Vertex<N,R>* current = vertexSet.at(k);
+		for(unsigned int a = 0; a < current->adj.size(); a++) {
+			Vertex<N,R>* dest = current->adj[a].dest;
+			dest->heuristic = current->adj[a].weight + (current->adj[a].weight / (dest->getNumCli() + 1));
+		}
+	}
+
+	//cout << "final node " << final_id << endl;
+	return final_id;
 }
 
 #endif /* GRAPH_H_ */

@@ -28,5 +28,6 @@ vector<Road> readRoads();
 void readSubRoads(Graph<Node,Road> &g, vector<Road> roads);
 void readReservations(AirShuttle &airShuttle);
 void readVans(AirShuttle &airShuttle);
+void addRestoGraph(Graph<Node,Road> &g, vector<Reservation> reservations);
 
 #endif

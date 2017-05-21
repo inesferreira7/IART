@@ -7,7 +7,7 @@
  * @param p_radian
  * @param hotel
  */
-Node:: Node(int node_id, Point p_degree, Point p_radian, string hotel) : node_id(node_id), p_degree(p_degree), p_radian(p_radian), hotel(hotel){}
+Node:: Node(int node_id, Point p_degree, Point p_radian, string hotel) : node_id(node_id), p_degree(p_degree), p_radian(p_radian), hotel(hotel), num_cli(0){}
 
 /**
  * Returns the Point in degrees

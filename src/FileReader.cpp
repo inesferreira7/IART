@@ -223,3 +223,14 @@ void readVans(AirShuttle &airShuttle){
 	}
 	infile.close();
 }
+
+void addRestoGraph(Graph<Node,Road> &g, vector<Reservation> reservations){
+	for(unsigned int i=0; i < reservations.size(); i++){
+		string local_name = reservations.at(i).getDestination();
+		for(unsigned int j=1; j < g.getNumVertex(); j++){
+			if(g.getVertex(j)->getInfo().getHotelName() == local_name){
+				g.getVertex(j)->addCli();
+			}
+		}
+	}
+}
